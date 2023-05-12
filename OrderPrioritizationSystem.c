@@ -89,34 +89,33 @@ void take_order() {
 
     new_order->total_time = total_time;
 
-    struct Order* current = order_list;
-    struct Order* previous = NULL;
+    if (order_count <= 5) {
+        struct Order* current = order_list;
+        struct Order* previous = NULL;
 
-    if (order_list == NULL) {
-        order_list = new_order;
-    } else {
-        while (current->next != NULL) {
+        while (current != NULL && current->total_time <= total_time) {
+            previous = current;
             current = current->next;
         }
+
+        if (previous == NULL) {
+            new_order->next = order_list;
+            order_list = new_order;
+        } else {
+            new_order->next = current;
+            previous->next = new_order;
+        }
+    } else {
+        struct Order* current = order_list;
+        struct Order* previous = NULL;
+
+        while (current->next != NULL) {
+            previous = current;
+            current = current->next;
+        }
+
         current->next = new_order;
     }
-
-    struct Order* temp = NULL;
-    int swapped;
-
-    do {
-        swapped = 0;
-        current = order_list;
-
-        while (current->next != temp) {
-            if (current->total_time > current->next->total_time) {
-                swap_orders(current, current->next);
-                swapped = 1;
-            }
-            current = current->next;
-        }
-        temp = current;
-    } while (swapped);
 
     printf("Order taken successfully. Order number is %d\n", new_order->order_number);
 }
